@@ -1,0 +1,36 @@
+# Define os serviços que o Render vai criar para nós
+services:
+  # Primeiro serviço: nossa API Java (Web Service)
+  - type: web
+    name: portfolio-api
+    runtime: java
+    region: sa-east-1 # Região de São Paulo
+    plan: free # Usa o plano gratuito
+    buildCommand: "./mvnw clean package"
+    startCommand: "java -jar target/portfolio-api-0.0.1-SNAPSHOT.jar"
+    envVars:
+      - key: JAVA_VERSION
+        value: 21 # Coloque a sua versão do Java aqui (17 ou 21)
+      - key: SPRING_PROFILES_ACTIVE # Garante que o perfil de produção seja usado
+        value: prod
+      # As 3 linhas abaixo conectam a API ao banco de dados
+      - key: spring.datasource.url
+        fromDatabase:
+          name: portfolio-db # O nome que damos ao nosso banco abaixo
+          property: jdbcConnectionString
+      - key: spring.datasource.username
+        fromDatabase:
+          name: portfolio-db
+          property: user
+      - key: spring.datasource.password
+        fromDatabase:
+          name: portfolio-db
+          property: password
+
+  # Segundo serviço: nosso banco de dados PostgreSQL
+  - type: psql
+    name: portfolio-db
+    region: sa-east-1 # Mesma região da API
+    plan: free # Usa o plano gratuito
+    databaseName: portfolio_db # Nome do banco de dados real
+    user: portfolio_user # Nome do usuário do banco
