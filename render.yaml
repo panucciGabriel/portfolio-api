@@ -28,7 +28,7 @@ services:
           property: password
 
   # Segundo serviço: nosso banco de dados PostgreSQL
-  - type: psql
+  - type: postgres
     name: portfolio-db
     region: sa-east-1 # Mesma região da API
     plan: free # Usa o plano gratuito
